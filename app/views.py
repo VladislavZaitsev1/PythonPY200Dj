@@ -1,9 +1,10 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from .models import get_random_text
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
-from .forms import TemplateForm
+from .forms import TemplateForm, CurrentUserCreationForm
 
 
 def template_view(request):
@@ -12,7 +13,29 @@ def template_view(request):
 
     if request.method == "POST":
         received_data = request.POST  # Приняли данные в словарь
+        form = TemplateForm(received_data)  # Передали данные в форму
+        if form.is_valid():  # Проверили, что данные все валидные
+            my_text = form.cleaned_data.get("my_text")  # Получили очищенные данные
+            my_select = form.cleaned_data.get("my_select")
+            my_textarea = form.cleaned_data.get("my_textarea")
+            my_email = form.cleaned_data.get('my_email')
+            my_password = form.cleaned_data.get('my_password')
+            remember_me = form.cleaned_data.get('remember_me')
+            my_birthdate = form.cleaned_data.get('my_birthdate')
+            my_favourite_date = form.cleaned_data.get('my_favourite_date')
+            return JsonResponse(form.cleaned_data, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+        return render(request, 'app/template_form.html', context={"form": form})
 
+        """
+        data = {}
+        data['my_email'] = received_data.get('my_email')
+        data['my_password'] = received_data.get('my_password')
+        data['my_text'] = received_data.get('my_text')
+        data['remember_me'] = received_data.get('remember_me')
+        data['my_birthdate'] = received_data.get('my_birthdate')
+        data['my_favourite_date'] = received_data.get('my_favourite_date')
+        return JsonResponse(data, json_dumps_params={'ensure_ascii': False, 'indent': 4})>
+        """
         # как пример получение данных по ключу `my_text`
         # my_text = received_data.get('my_text')
 
@@ -26,12 +49,12 @@ def login_view(request):
         return render(request, 'app/login.html')
 
     if request.method == "POST":
-        data = request.POST
-        user = authenticate(username=data["username"], password=data["password"])
-        if user:
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
             return redirect("app:user_profile")
-        return render(request, "app/login.html", context={"error": "Неверные данные"})
+        return render(request, "app/login.html", context={"form": form})
 
 
 def logout_view(request):
@@ -45,7 +68,13 @@ def register_view(request):
         return render(request, 'app/register.html')
 
     if request.method == "POST":
-        return render(request, 'app/register.html')
+        form = CurrentUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()  # Возвращает сохраненного пользователя из данных формы
+            login(request, user,backend='django.contrib.auth.backends.ModelBackend')
+            return redirect("app:user_profile")
+
+        return render(request, 'app/register.html', context={"form": form})
 
 
 def index_view(request):

@@ -37,8 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'app',
 ]
+
+AUTHENTICATION_BACKENDS = (
+   'social_core.backends.github.GithubOAuth2',
+   'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_REDIRECT_URL = '/profile/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +57,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SOCIAL_AUTH_GITHUB_KEY = '1d0f6b657fc44e755723'
+SOCIAL_AUTH_GITHUB_SECRET = 'd6bc7dabb3cc6acf7e762ef565db7af45aa0566a'
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email', 'read:user']
 
 ROOT_URLCONF = 'project.urls'
 

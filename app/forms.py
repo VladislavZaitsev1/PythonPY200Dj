@@ -1,5 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.forms import EmailInput
+
+
 # TODO создайте здесь все необходимые формы
 
 
@@ -13,8 +16,14 @@ class TemplateForm(forms.Form):
     ))
     # widget тоже нужен только для отображения в HTML
     my_textarea = forms.CharField(widget=forms.Textarea)
+    my_password = forms.CharField(widget=forms.PasswordInput)
+    my_email = forms.EmailField(widget=forms.EmailInput)
+    my_text = forms.CharField()
+    remember_me = forms.BooleanField()
+    my_birthdate = forms.DateField()
+    my_favourite_date = forms.IntegerField()
 
-    # TODO Опишите поля (поле для email, пароля, даты, целого числа, переключателя) и их параметры для вашего шаблона формы
+    # TODO Опишите поля (, , , ) и их параметры для вашего шаблона формы
 
 
 """
@@ -51,3 +60,15 @@ class TemplateForm(forms.Form):
 * forms.RegexField(regex='[А-яA-z]+') - <input type="text"> (с дополнительной валидацией на стороне сервера для соответствия регулярному выражению)
 * forms.UUIDField() - <input type="text"> (для ввода UUID)
 """
+
+class CurrentUserCreationForm(UserCreationForm):
+    email = forms.EmailField(widget=forms.EmailInput)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data.get('email')
+        if commit:
+            user.save()
+            if hasattr(self, "save_m2m"):
+                self.save_m2m()
+        return user
