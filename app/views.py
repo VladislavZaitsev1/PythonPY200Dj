@@ -5,6 +5,60 @@ from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
 from .forms import TemplateForm, CurrentUserCreationForm
+from django.views import View
+from django.views.generic import TemplateView, FormView
+from django.contrib.auth.views import LoginView
+
+class MyLoginView(LoginView):
+    template_name = 'app/login.html'
+    redirect_authenticated_user = True
+class MyFormView(FormView):
+    template_name = 'app/template_form.html'  # Шаблон который будет рендерится
+    form_class = TemplateForm  # Класс формы который будет валидироваться
+    success_url = '/'  # Ссылка для перехода при удачной валидации
+
+    def form_valid(self, form):
+        return JsonResponse(form.cleaned_data)
+
+class MyTemplView(TemplateView):
+    template_name = 'app/template_form.html'
+def post(self, request, *args, **kwargs):
+    received_data = request.POST
+    form = TemplateForm(received_data)  # Передали данные в форму
+    if form.is_valid():  # Проверили, что данные все валидные
+        my_text = form.cleaned_data.get("my_text")  # Получили очищенные данные
+        my_select = form.cleaned_data.get("my_select")
+        my_textarea = form.cleaned_data.get("my_textarea")
+        my_email = form.cleaned_data.get('my_email')
+        my_password = form.cleaned_data.get('my_password')
+        remember_me = form.cleaned_data.get('remember_me')
+        my_birthdate = form.cleaned_data.get('my_birthdate')
+        my_favourite_date = form.cleaned_data.get('my_favourite_date')
+        return JsonResponse(form.cleaned_data, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+    context = self.get_context_data(**kwargs)  # Получаем контекст, если он есть
+    context["form"] = form  # Записываем в контекст форму
+    return self.render_to_response(context)  # Возвращаем вызов метода render_to_response
+
+
+class TemplView(View):
+    def get(self, request):
+        return render(request, 'app/template_form.html')
+
+
+    def post(self, request):
+        received_data = request.POST
+        form = TemplateForm(received_data)  # Передали данные в форму
+        if form.is_valid():  # Проверили, что данные все валидные
+            my_text = form.cleaned_data.get("my_text")  # Получили очищенные данные
+            my_select = form.cleaned_data.get("my_select")
+            my_textarea = form.cleaned_data.get("my_textarea")
+            my_email = form.cleaned_data.get('my_email')
+            my_password = form.cleaned_data.get('my_password')
+            remember_me = form.cleaned_data.get('remember_me')
+            my_birthdate = form.cleaned_data.get('my_birthdate')
+            my_favourite_date = form.cleaned_data.get('my_favourite_date')
+            return JsonResponse(form.cleaned_data, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+        return render(request, 'app/template_form.html', context={"form": form})
 
 
 def template_view(request):

@@ -39,12 +39,22 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'app',
+    'landing',
 ]
 
 AUTHENTICATION_BACKENDS = (
    'social_core.backends.github.GithubOAuth2',
    'django.contrib.auth.backends.ModelBackend',
 )
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ethereal.email'
+EMAIL_HOST_USER = 'zachery.sipes@ethereal.email'
+EMAIL_HOST_PASSWORD = 'z17GdhV7tPfj5w26ux'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = True
+# Пример настроек для использования консольного бэкенда (для тестирования)
 
 LOGIN_REDIRECT_URL = '/profile/'
 
