@@ -4,5 +4,5 @@ from .views import my_view, MyTemplateView
 app_name = 'landing'
 
 urlpatterns = [
-    path('', MyTemplateView.as_view())
+    path('', MyTemplateView.as_view(), name='template')
 ]

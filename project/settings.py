@@ -47,8 +47,6 @@ AUTHENTICATION_BACKENDS = (
    'django.contrib.auth.backends.ModelBackend',
 )
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.ethereal.email'
 EMAIL_HOST_USER = 'zachery.sipes@ethereal.email'
 EMAIL_HOST_PASSWORD = 'z17GdhV7tPfj5w26ux'

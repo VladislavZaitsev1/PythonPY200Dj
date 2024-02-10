@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
-from app.forms import TemplateForm
-
+from .forms import MyForm
 
 
 # Create your views here.
@@ -13,13 +12,12 @@ def my_view(request):
 class MyTemplateView(TemplateView):
     template_name = "landing/index.html"
 
-def post(self, request, **kwargs):
-        received_data = request.POST
-        form = TemplateForm(received_data)
+    def post(self, request):
+        form = MyForm(request.POST)
         if form.is_valid():
-            My_name = form.cleaned_data.get("My_name")  # Получили очищенные данные
-            My_email = form.cleaned_data.get('My_email')
-            My_message = form.cleaned_data.get('My_message')
+            NAME = form.cleaned_data.get("NAME")  # Получили очищенные данные
+            EMAIL = form.cleaned_data.get('EMAIL')
+            MESSAGE = form.cleaned_data.get('MESSAGE')
             data = form.cleaned_data
             x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
             if x_forwarded_for:
